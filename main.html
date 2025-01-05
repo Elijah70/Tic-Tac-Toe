@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <title> Tic-Tac-Toe </title>
+    </head>
+    <body>
+        
+            <header> Initiating: Tic-Tac-Toe </header>
+            <div class="scoreboard">
+                <div style="position: fixed; left: 300px;">
+                    <label class="user_info" id="score">Player's wins</label>
+                    <p id="player_score" class="score">0</p>
+                </div>
+            
+                <div style="position: fixed; right: 300px;">
+                    <label class="bot_info">Bot's wins</label>
+                    <p id="bot_score" class="score">0</p>
+                </div>
+            </div>
+            
+        
+
+        <section class="bottom">
+            <div class="boundary">
+                <div style="display: flex" class="column" id="column">
+                    <div class="row" id="1" onmouseover="mouseover('1')" onmouseout="mouseout()"></div>
+                    <div class="row" id="2" onmouseover="mouseover('2')" onmouseout="mouseout()"></div>
+                    <div class="row" id="3" onmouseover="mouseover('3')" onmouseout="mouseout()"></div>
+                </div>
+                <div style="display: flex" class="column">
+                    <div class="row" id="4" onmouseover="mouseover('4')" onmouseout="mouseout()"></div>
+                    <div class="row" id="5" onmouseover="mouseover('5')" onmouseout="mouseout()"></div>
+                    <div class="row" id="6" onmouseover="mouseover('6')" onmouseout="mouseout()"></div>
+                </div>
+                <div style="display: flex" class="column">
+                    <div class="row" id="7" onmouseover="mouseover('7')" onmouseout="mouseout()"></div>
+                    <div class="row" id="8" onmouseover="mouseover('8')" onmouseout="mouseout()"></div>
+                    <div class="row" id="9" onmouseover="mouseover('9')" onmouseout="mouseout()"></div>
+                </div>
+            </div>
+
+            <div id="gameLog">
+                <label id="textLog"></label>
+                <button style="display: none" id="new_game">New Game</button>
+            </div>
+        </section>
+        <script defer>
+            let curr_piece = "X";
+            let hover_over = null;
+            let new_game_button = document.getElementById("new_game");
+            let player_wins = 0;
+            let comp_wins = 0;
+            let remaining_cells = 9;
+
+            //This will be important for experimenting with possible combinations in minimax algorithm
+            let model_board = ["_","_","_","_","_","_","_","_","_"];
+
+            //This function ends the current game and displays Win information resets the board and starts a new game
+            function newGame(board, piece){
+                if (piece == "X") {
+                    changeLog("X's win!");
+                    player_wins++;
+                    update_scores();
+                }
+
+                if (piece == "O") {
+                    changeLog("O's win!");
+                    comp_wins++;
+                    update_scores();
+                }
+
+                if (piece == "/") {
+                    changeLog("No winner this round");
+                    curr_piece = "X";
+                }
+
+                //Show new game button to restart game
+
+                new_game_button.addEventListener("click", resetBoard, once=true);
+                new_game_button.style.display = 'inline';
+            }
+            
+            //This function resets the game upon selection by player
+            function resetBoard() {
+                console.log("running");
+                let board = document.getElementsByClassName("row");
+
+                for (let i = 0; i < 9; i++) {
+                    if(board[i].hasChildNodes()){
+                        board[i].removeChild(board[i].firstChild);
+                    }
+                }
+
+                model_board = ["_","_","_","_","_","_","_","_","_"];
+                remaining_cells = 9;
+
+                switch_turn(curr_piece);
+                new_game_button.style.display = 'none';
+            }
+
+
+
+            //This function updates player's scores
+            function update_scores(){
+                document.getElementById("player_score").textContent = player_wins;
+                document.getElementById("bot_score").textContent = comp_wins;
+            }
+            
+            //This function switches each player's turn
+            function switch_turn(piece){
+                switch(piece){
+                    case "X":
+                        curr_piece = "O";
+                        changeLog("O's Turn!");
+                        break;
+                    case "O":
+                        curr_piece = "X";
+                        changeLog("X's Turn!");
+                        break;
+                }
+
+                console.log("current piece: " + curr_piece);
+                if(curr_piece == "O") {
+                    establishPiece();
+                }
+            }
+
+            function checkBoard(piece){
+                let board = document.getElementsByClassName("row");
+                let gameOver = false;
+                let full_board = true;
+
+                //Check if all spaces on board are filled
+                for (let k = 0; k<9; k++) {
+                    if(!board[k].hasChildNodes()) {
+                        full_board = false;
+                        break;
+                    } 
+                }
+
+                //Check each possible win states on board
+                //Checking diagonal matches
+                if (board[0].hasChildNodes() && board[4].hasChildNodes() && board[8].hasChildNodes()) {
+                    if(board[0].firstChild.textContent == piece && board[4].firstChild.textContent == piece && board[8].firstChild.textContent == piece) {
+                        gameOver = true;
+                    }
+
+                }
+                if (board[2].hasChildNodes() && board[4].hasChildNodes() && board[6].hasChildNodes()) {
+                    if(board[2].firstChild.textContent == piece && board[4].firstChild.textContent == piece && board[6].firstChild.textContent == piece) {
+                        gameOver = true;
+                    }
+
+                }
+                let i = 0;
+                let j = 0;
+                while(!gameOver && i < 3){
+                    //Check column matches
+                    if (board[i].hasChildNodes() && board[i+3].hasChildNodes() && board[i+6].hasChildNodes()) {
+                        if(board[i].firstChild.textContent == piece && board[i+3].firstChild.textContent == piece && board[i+6].firstChild.textContent == piece) {
+                            gameOver = true;
+                        }
+                    } 
+
+                    //Check row matches
+                    if (board[j].hasChildNodes() && board[j+1].hasChildNodes() && board[j+2].hasChildNodes()) {
+                        if(board[j].firstChild.textContent == piece && board[j+1].firstChild.textContent == piece && board[j+2].firstChild.textContent == piece) {
+                            gameOver = true;
+                        }
+                    }
+
+                    i++;
+                    j+=3;
+                }
+            
+
+                console.log("winstate: "+gameOver);
+                if (gameOver) {
+                    //end game and declare winner
+                    console.log("Game end");
+                    newGame(board, piece);
+                    return;
+
+                }
+                    
+                //Check if all spaces on board are filled
+                for (let k = 0; k<9; k++) {
+                    if(!board[k].hasChildNodes()) {
+                        full_board = false;
+                        break;
+                    } 
+                }
+                    
+                if (full_board){
+                    newGame(board, "/");
+                    return;
+                }  
+
+                switch_turn(curr_piece);
+            }
+
+            //Create new text tags for X and O's, denoting which space is occupied by which player.
+            function establishPiece(){
+                //Player's turn
+                if(curr_piece == "X") {
+                    if(!document.getElementById(hover_over).hasChildNodes()){
+
+
+                        let newPiece = document.createElement("p");
+                        newPiece.setAttribute("class", curr_piece);
+                        newPiece.appendChild(document.createTextNode(curr_piece));
+                        document.getElementById(hover_over).appendChild(newPiece);
+
+                        model_board[hover_over-1] = curr_piece;
+
+                        remaining_cells--;
+                        checkBoard(curr_piece);
+                    } else {
+                        changeLog("Invalid move, Try Again");
+                    }
+
+                    //Computer's turn
+                } else {
+                    if(remaining_cells == 9) {
+                        opponents_pick = 1 + (Math.floor((10*Math.random())/2))
+                    } else {
+                        opponents_pick = findBestMove(model_board, remaining_cells);
+                    }
+                    
+                    console.log("Opponent's pick: " + opponents_pick);
+
+                    let newPiece = document.createElement("p");
+                    newPiece.setAttribute("class", curr_piece);
+                    newPiece.appendChild(document.createTextNode(curr_piece));
+                    document.getElementById(opponents_pick).appendChild(newPiece);
+
+                    model_board[opponents_pick-1] = curr_piece;
+
+                    remaining_cells--;
+
+                    checkBoard(curr_piece);
+                }
+
+            }
+
+            function changeLog(message){
+                document.getElementById("textLog").textContent = message;
+            }
+
+
+
+            //*-*-*-*-*-*-*-*-*-*-*-*-*-*
+            // Start of Minimax Algorithm
+            //*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+            //Minimax Algorithm for Tic-Tac-Toe AI
+            function findBestMove(board, depth) {
+                best_score = -100;
+                best_move = null;
+
+
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] == "_") {
+                        board[i] = "X";
+                        cell_score = minimax(board, depth-1, true);
+
+                        board[i] = "_";
+
+                        if(cell_score > best_score) {
+                            best_score = cell_score;
+                            best_move = i;
+                        }
+                    }
+                }
+
+                return best_move+1;
+            }
+
+
+            function minimax(board, depth, maxPlayer) {
+                //Terminal state
+                let score = evaluation(board);
+
+                if (score > 0) {
+                    //Maximizer wins
+                    return score;
+                }
+
+                if (score < 0) {
+                    //Minimizer wins
+                    return score;
+                }
+
+                if (depth < 1) {
+                    return 0;
+                }
+
+                //Maximizer (AI)
+                if (maxPlayer) {
+                    best_value = -100;
+                    for (let i = 0; i < 9; i++) {
+                        cell = board[i]
+                        //if a cell is empty
+                        if (cell == "_") {
+                            cell = "O";
+                            best_value = Math.max(minimax(board, depth-1, !maxPlayer), best_value);
+
+                            cell = "_";
+                        }
+                    }
+
+                    return best_value;
+
+                //Minimizer (Opponent)
+                } else {
+                    best_value = 100;
+                    for (let i = 0; i < 9; i++) {
+                        cell = board[i]
+                        if (cell == "_") {
+                            cell = "X";
+                            best_value = Math.min(minimax(board, depth-1, !maxPlayer), best_value);
+
+                            cell = "_";
+                        }
+                    }
+
+                    return best_value;
+                }
+            }
+
+            function evaluation(board) {
+                //First, check diagonals
+                if (board[0] == board[4] && board[4] == board[8]) {
+                    //Check if piece belongs to player or computer
+                    if (board[0] == "X") {
+                        return -10;
+
+                    } else if (board[0] == "O") {
+                        return 10;
+                    }
+
+                    
+                } else if (board[2] == board[4] && board[4] == board[6]) {
+                    //Check if piece belongs to player or computer
+                    if (board[2] == "X") {
+                        return -10;
+
+                    } else if (board[2] == "O") {
+                        return 10;
+                    }
+                }
+
+                //next, check rows/columns
+                for (let i = 0, j = 0; i < 3; i++, j+=3) {
+                    //checking rows
+                    if (board[j] == board[j+1] && board[j+1] == board[j+2]) {
+                        if (board[j] == "X") {
+                            return -10;
+                        } else if (board[j] == "O") {
+                            return 10;
+                        }
+                    }
+
+                    //checking columns
+                    if (board[i] == board[i+3] && board[i+3] == board[i+6]) {
+                        if (board[i] == "X") {
+                            return -10;
+                        } else if (board[i] == "O") {
+                            return 10;
+                        }
+                    }
+                }
+
+                return 0;
+            }
+
+            //*-*-*-*-*-*-*-*-*-*-*-*-*
+            // End of Minimax Algorithm
+            //*-*-*-*-*-*-*-*-*-*-*-*-*
+            
+            async function mouseover(id){
+                if(curr_piece == "X") {
+                    hover_over = id;
+                    document.getElementById(hover_over).addEventListener("click", establishPiece);
+                }
+            }
+
+            async function mouseout(){
+                if (curr_piece == "X") {
+                    document.getElementById(hover_over).removeEventListener("click", establishPiece);
+                    hover_over = null;
+                }
+            }
+
+            
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,111 @@
+header{
+    text-align: center;
+    font-size: x-large;
+    color: white;
+
+}
+
+/* Design for top half of screen */
+
+body{
+    background-color: black;
+}
+
+label.user_info{
+    text-decoration: underline;
+    font-size: x-large;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: greenyellow;
+}
+
+label.bot_info{
+    text-decoration: underline;
+    font-size: x-large;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: greenyellow;
+}
+
+.score{
+    text-align: center;
+    font-size: large;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: greenyellow;
+}
+
+div.scoreboard{
+    position: absolute;
+    left: 25%;
+    display: flex;
+    margin: auto;
+}
+
+/* Design for bottom section of site */
+
+section.bottom{
+    background-color: rgb(81, 81, 81);
+    
+}
+
+/* Design for game pieces */
+.X{
+    text-align: center;
+    font-size: xx-large;
+    font-family: Arial, Helvetica, sans-serif;
+    color: aqua;
+}
+
+.O{
+    text-align: center;
+    font-size: xx-large;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: orangered;
+}
+
+/* Design for gameboard */
+div.column{
+    width: 300px;
+    height: 100px;
+    
+}
+
+div.row:hover{
+    border: 1px solid aquamarine;
+    background-color: rgba(34, 244, 41, 0.5);
+    
+}
+    
+div.row{
+    width: 100px;
+    height: 100px;
+    border: 1px solid greenyellow;
+    
+}
+
+div.boundary{
+    width: 300px;
+    margin-top: 80px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px; 
+    border: 1px dashed yellow;
+}
+
+#gameLog{
+    text-align: center;
+    color: white;
+    background-color: gray;
+    width: 300px;
+    padding: 25px;
+    border: 1px solid greenyellow;
+    position: sticky;
+    margin: 15px auto;
+    margin-bottom: 30px;
+}
+
+#new_game{
+    position: sticky;
+    margin: 0px auto;
+    left: 50%;
+
+}
