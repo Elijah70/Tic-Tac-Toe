@@ -106,6 +106,7 @@ div.boundary{
 #new_game{
     position: sticky;
     margin: 0px auto;
-    left: 50%;
+    color: green;
+    background-color: greenyellow;
 
 }
