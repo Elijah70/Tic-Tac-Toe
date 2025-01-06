@@ -78,9 +78,9 @@
                 //Show new game button to restart game
 
                 new_game_button.addEventListener("click", resetBoard, once=true);
-                new_game_button.style.display = 'inline';
+                new_game_button.style.display = 'block';
             }
-            
+
             //This function resets the game upon selection by player
             function resetBoard() {
                 console.log("running");
@@ -262,7 +262,7 @@
 
                 for (let i = 0; i < 9; i++) {
                     if (board[i] == "_") {
-                        board[i] = "X";
+                        board[i] = "O";
                         cell_score = minimax(board, depth-1, true);
 
                         board[i] = "_";
